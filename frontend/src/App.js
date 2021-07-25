@@ -1,23 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { Switch, Route, Link } from 'react-router-dom';
+import BoardgamesList from './components/boardgamesList.screen';
+import RecordGame from './components/recordGame';
+import PlayersList from './components/playersList.screen';
+import PlayerDetails from './components/playerDetails';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <nav style={{}}>
+        <div>
+          <li>
+            <Link to={'/'} className="nav-link">
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link to={'/recordGame'} className="nav-link">
+              Record Game
+            </Link>
+          </li>
+          <li>
+            <Link to={'/playersList'} className="nav-link">
+              Players List
+            </Link>
+          </li>
+        </div>
+      </nav>
+
+      <div>
+        <Switch>
+          <Route exact path={'/'} component={BoardgamesList} />
+          <Route exact path={'/recordGame'} component={RecordGame} />
+          <Route exact path={'/playersList'} component={PlayersList} />
+          <Route exact path={'/playersList/:id/playerDetails'} component={PlayerDetails} />
+        </Switch>
+      </div>
     </div>
   );
 }
