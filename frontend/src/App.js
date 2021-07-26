@@ -5,16 +5,16 @@ import BoardgamesList from './components/boardgamesList.screen';
 import RecordGame from './components/recordGame';
 import PlayersList from './components/playersList.screen';
 import PlayerDetails from './components/playerDetails';
-import { getBoardgames } from './actions';
+import { getBoardgames, getGameRecords, getPlayers } from './actions';
 
 function App() {
-  const { state, dispatch } = useContext(store);
+  const { dispatch } = useContext(store);
 
   useEffect(() => {
     getBoardgames(dispatch);
+    getGameRecords(dispatch);
+    getPlayers(dispatch);
   }, [dispatch]);
-
-  console.log(state);
 
   return (
     <div>
