@@ -8,6 +8,7 @@ import BoardgamesList from './components/BoardgamesList';
 import RecordGame from './components/RecordGame';
 import PlayersList from './components/PlayersList';
 import PlayerDetails from './components/PlayerDetails';
+import styled from 'styled-components';
 
 function App() {
   const { dispatch } = useContext(store);
@@ -22,53 +23,16 @@ function App() {
     <div style={{ display: 'flex', height: '100vh' }}>
       <nav style={{ backgroundColor: 'skyblue', width: '200px', padding: 16 }}>
         <div>
-          <li style={{}}>
-            <Link
-              to={'/recordGame'}
-              style={{
-                padding: 8,
-                backgroundColor: 'white',
-                borderRadius: 100,
-                height: 50,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold',
-                color: 'steelblue',
-                fontSize: 19,
-              }}
-            >
-              <p>Add Shit</p>
-            </Link>
-          </li>
+          <Button to={'/recordGame'}>
+            <p style={{ color: 'steelblue' }}>Record Game</p>
+          </Button>
           <li>
-            <Link
-              style={{
-                marginTop: 25,
-                padding: 8,
-                height: 50,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              to={'/'}
-            >
+            <NavLink style={{ marginTop: 25 }} to={'/'}>
               Boardgame List
-            </Link>
+            </NavLink>
           </li>
           <li>
-            <Link
-              style={{
-                padding: 8,
-                height: 50,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              to={'/playersList'}
-            >
-              Players List
-            </Link>
+            <NavLink to={'/playersList'}>Players List</NavLink>
           </li>
         </div>
       </nav>
@@ -86,3 +50,26 @@ function App() {
 }
 
 export default App;
+
+const Button = styled(Link)`
+  background-color: white;
+  border-radius: 100px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: steelblue;
+  font-size: 19px;
+  border-style: none;
+  width: 100%;
+  cursor: pointer;
+`;
+
+const NavLink = styled(Link)`
+  padding: 8px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
