@@ -1,11 +1,21 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
+import { store } from './store';
 import { Switch, Route, Link } from 'react-router-dom';
 import BoardgamesList from './components/boardgamesList.screen';
 import RecordGame from './components/recordGame';
 import PlayersList from './components/playersList.screen';
 import PlayerDetails from './components/playerDetails';
+import { getBoardgames } from './actions';
 
 function App() {
+  const { state, dispatch } = useContext(store);
+
+  useEffect(() => {
+    getBoardgames(dispatch);
+  }, [dispatch]);
+
+  console.log(state);
+
   return (
     <div>
       <nav style={{}}>
