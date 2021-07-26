@@ -4,13 +4,13 @@ import AddInputField from './AddInputField';
 
 export default function BoardgameForm({ boardgames }) {
   const [filteredBoardgames, setFilteredBoardgames] = useState([]);
-  const [boardgameResultsVisible, setBoardgameResultsVisible] = useState(false);
+  const [showBoardgameSearchResults, setShowBoardgameSearchResults] = useState(false);
   const [selectedBoardgame, setSelectedBoardgame] = useState(null);
   const [showAddGameMenu, setShowAddGameMenu] = useState(false);
   const [newExpansions, setNewExpansions] = useState([]);
 
-  const handleBoardgameOnChange = (e) => {
-    setBoardgameResultsVisible(true);
+  const handleBoardgameSearchOnChange = (e) => {
+    setShowBoardgameSearchResults(true);
     setFilteredBoardgames(
       boardgames.filter((boardgame) => {
         return boardgame.name.toLowerCase().includes(e.target.value.toLowerCase());
@@ -34,7 +34,7 @@ export default function BoardgameForm({ boardgames }) {
           <Delete
             onClick={() => {
               setSelectedBoardgame(null);
-              setBoardgameResultsVisible(false);
+              setShowBoardgameSearchResults(false);
             }}
             children={'Delete'}
           />
@@ -63,7 +63,7 @@ export default function BoardgameForm({ boardgames }) {
           <Delete
             onClick={() => {
               setShowAddGameMenu(false);
-              setBoardgameResultsVisible(false);
+              setShowBoardgameSearchResults(false);
               setNewExpansions([]);
             }}
             children={'Delete'}
@@ -83,12 +83,12 @@ export default function BoardgameForm({ boardgames }) {
         <SearchContainer>
           <ListSearchInput
             placeholder={'Search boardgames...'}
-            onChange={(e) => handleBoardgameOnChange(e)}
+            onChange={(e) => handleBoardgameSearchOnChange(e)}
             onBlur={() => {
-              selectedBoardgame && setBoardgameResultsVisible(false);
+              selectedBoardgame && setShowBoardgameSearchResults(false);
             }}
           />
-          {boardgameResultsVisible && (
+          {showBoardgameSearchResults && (
             <SearchResultsList>
               {filteredBoardgames.map((boardgame) => {
                 return (
