@@ -1,5 +1,5 @@
 import React, { createContext, useReducer } from 'react';
-import ACTIONS from './actions/actions';
+import ACTIONS from '../actions/actions';
 
 const initialState = {
   isLoading: false,
