@@ -30,14 +30,14 @@ export default function PlayersForm({ globalPlayersList, getPlayersData }) {
     list.includes(player) === false && list.push(player);
     setPlayers(list);
     setShowPlayerSearchResults(false);
-    getPlayersData([...list, newPlayers]);
+    getPlayersData([...list, ...newPlayers]);
   };
 
   const handleSelectedPlayerChange = (index, type, key, value) => {
     const list = [...players];
     type === 'delete' ? list.splice(index, 1) : (list[index][key] = capitalizeSingleWord(value));
     setPlayers(list);
-    getPlayersData([...list, newPlayers]);
+    getPlayersData([...list, ...newPlayers]);
   };
 
   return (

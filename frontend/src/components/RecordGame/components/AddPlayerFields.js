@@ -9,7 +9,7 @@ export default function AddPlayerFields({ parentCallback }) {
     const list = [...itemsArray];
     type === 'delete' ? list.splice(index, 1) : (list[index][key] = capitalizeSingleWord(value));
     setItemsArray(list);
-    parentCallback(itemsArray);
+    parentCallback(list);
   };
 
   return (
