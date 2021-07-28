@@ -45,14 +45,22 @@ export default class BoardgamesDAO {
 
   //TODO: respond error when duplicate expansions
 
-  static async addBoardgame(boardgameName, expansionsOwned = []) {
+  static async addBoardgame(name, expansionsOwned = []) {
     try {
       const boardgameDoc = {
-        name: boardgameName,
+        name: name,
         expansionsOwned: expansionsOwned,
       };
-
-      return await boardgames.insertOne(boardgameDoc);
+      return await boardgames.findOneAndUpdate(
+        {
+          name: name,
+        },
+        { $set: { name: name }, $addToSet: { expansionsOwned: { $each: [...expansionsOwned] } } },
+        {
+          upsert: true,
+          setDefaultsOnInsert: true,
+        }
+      );
     } catch (e) {
       console.error(`Unable to post boardgame: ${e}`);
       return { error: e };

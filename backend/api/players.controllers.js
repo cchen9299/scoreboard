@@ -28,10 +28,9 @@ export default class PlayersController {
 
   static async apiPostPlayer(req, res, next) {
     try {
-      const firstName = req.body.firstName;
-      const lastName = req.body.lastName;
+      const players = req.body;
 
-      const gameRecordResponse = await PlayersDAO.addPlayer(firstName, lastName);
+      const gameRecordResponse = await PlayersDAO.addPlayer(players);
       res.json({ status: 'success' });
     } catch (e) {
       res.status(500).json({ error: e.message });
