@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import AddInputField from './AddInputField';
+import AddExpansionField from './AddExpansionField';
 
-export default function BoardgameForm({ boardgames }) {
+export default function BoardgameForm({ boardgames, getBoardgameData }) {
   const [filteredBoardgames, setFilteredBoardgames] = useState([]);
   const [showBoardgameSearchResults, setShowBoardgameSearchResults] = useState(false);
+  const [showAddNewGameMenu, setShowAddNewGameMenu] = useState(false);
+
   const [selectedBoardgame, setSelectedBoardgame] = useState(null);
-  const [showAddGameMenu, setShowAddGameMenu] = useState(false);
+  const [newBoardgame, setNewBoardgame] = useState(null);
+
+  const [expansionsChecked, setExpansionsChecked] = useState([]);
   const [newExpansions, setNewExpansions] = useState([]);
 
   const handleBoardgameSearchOnChange = (e) => {
@@ -20,21 +24,62 @@ export default function BoardgameForm({ boardgames }) {
 
   const handleResultOnClick = (item) => {
     setSelectedBoardgame(item);
+    getBoardgameData({
+      boardgame: item,
+      expansionsPlayed: [...expansionsChecked, ...newExpansions],
+    });
   };
 
-  useEffect(() => {
-    setNewExpansions((prev) => prev);
-  }, [newExpansions]);
+  const handleNewBoardgameAdd = (e) => {
+    const item = { name: e.target.value };
+    setNewBoardgame(item);
+    getBoardgameData({
+      boardgame: item,
+      expansionsPlayed: [...expansionsChecked, ...newExpansions],
+    });
+  };
+
+  const handleBoardgameDelete = () => {
+    setSelectedBoardgame(null);
+    setNewBoardgame(null);
+    setExpansionsChecked([]);
+    getBoardgameData({
+      boardgame: null,
+      expansionsPlayed: null,
+    });
+  };
+
+  const handleNewExpansions = (newExpansions) => {
+    const list = [...newExpansions];
+    setNewExpansions([...newExpansions]);
+    getBoardgameData({
+      boardgame: selectedBoardgame || newBoardgame,
+      expansionsPlayed: [...expansionsChecked, list],
+    });
+  };
+
+  const handleExpansionChecked = (e) => {
+    const list = [...expansionsChecked];
+    const value = e.target.value;
+    const valueIndex = list.indexOf(value);
+    list.includes(e.target.value) ? list.splice(valueIndex, 1) : list.push(e.target.value);
+    setExpansionsChecked(list);
+    getBoardgameData({
+      boardgame: selectedBoardgame || newBoardgame,
+      expansionsPlayed: [list, ...newExpansions],
+    });
+  };
 
   if (selectedBoardgame) {
     return (
       <div>
         <SelectedBoardgameContainer>
-          <SelectedBoardgame>{selectedBoardgame.name}</SelectedBoardgame>
+          <SelectedBoardgame value={selectedBoardgame.name} disabled />
           <Delete
             onClick={() => {
               setSelectedBoardgame(null);
               setShowBoardgameSearchResults(false);
+              handleBoardgameDelete();
             }}
             children={'Delete'}
           />
@@ -43,38 +88,34 @@ export default function BoardgameForm({ boardgames }) {
         {selectedBoardgame.expansionsOwned?.map((expansion, index) => {
           return (
             <div key={expansion} style={{ display: 'flex' }}>
-              <input id={`expansion${index}`} type="checkbox" value={expansion} />
+              <input
+                id={`expansion${index}`}
+                type="checkbox"
+                value={expansion}
+                onChange={handleExpansionChecked}
+              />
               <label htmlFor={`expansion${index}`}>{expansion}</label>
             </div>
           );
         })}
-        <AddInputField
-          parentCallback={(expansionsArray) => {
-            setNewExpansions([...expansionsArray]);
-          }}
-        />
+        <AddExpansionField parentCallback={handleNewExpansions} />
       </div>
     );
-  } else if (showAddGameMenu) {
+  } else if (showAddNewGameMenu) {
     return (
       <div>
         <div style={{ display: 'flex', marginTop: 8 }}>
-          <Input placeholder={'Boardgame Name...'} />
+          <Input placeholder={'Boardgame Name...'} onChange={handleNewBoardgameAdd} />
           <Delete
             onClick={() => {
-              setShowAddGameMenu(false);
+              setShowAddNewGameMenu(false);
               setShowBoardgameSearchResults(false);
-              setNewExpansions([]);
+              handleBoardgameDelete();
             }}
             children={'Delete'}
           />
         </div>
-        {newExpansions && <label>Expansions Played</label>}
-        <AddInputField
-          parentCallback={(expansionsArray) => {
-            setNewExpansions([...expansionsArray]);
-          }}
-        />
+        <AddExpansionField parentCallback={handleNewExpansions} />
       </div>
     );
   } else {
@@ -100,7 +141,7 @@ export default function BoardgameForm({ boardgames }) {
             </SearchResultsList>
           )}
         </SearchContainer>
-        <AddButton onClick={() => setShowAddGameMenu(true)}>New Boardgame</AddButton>
+        <AddButton onClick={() => setShowAddNewGameMenu(true)}>New Boardgame</AddButton>
       </div>
     );
   }
@@ -138,10 +179,11 @@ const SelectedBoardgameContainer = styled.div`
   align-items: center;
 `;
 
-const SelectedBoardgame = styled.div`
+const SelectedBoardgame = styled.input`
   padding: 8px;
   flex: 1;
-  border: solid 2px grey;
+  border: solid 2px lightgrey;
+  background-color: lightgrey;
   border-radius: 5px;
 `;
 

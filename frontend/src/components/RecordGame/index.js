@@ -35,7 +35,13 @@ function RecordGame() {
         style={{ display: 'flex', flexDirection: 'column', width: '50%' }}
       >
         <h3>Boardgame</h3>
-        <BoardgameForm boardgames={boardgames} />
+        <BoardgameForm
+          boardgames={boardgames}
+          getBoardgameData={(data) => {
+            setGameRecordBoardgameData(data);
+            console.log(gameRecordBoardgameData);
+          }}
+        />
         <h3>Players</h3>
         <PlayersForm
           globalPlayersList={globalPlayersList}
@@ -43,10 +49,21 @@ function RecordGame() {
             setGameRecordPlayersData(data);
           }}
         />
-        <button type="submit">check value</button>
+        <br />
+        <button type="submit">Off to the data base you go</button>
       </form>
       {showData && (
-        <div style={{ minHeight: 100, backgroundColor: 'pink' }}>
+        <div style={{ minHeight: 100 }}>
+          <br />
+          <br />
+          <h3>Double Check My Data...</h3>
+          <br />
+          <div>
+            {gameRecordBoardgameData.boardgame?.name}
+            {gameRecordBoardgameData.expansionsPlayed?.map((expansion) => {
+              return <div>{expansion}</div>;
+            })}
+          </div>
           {gameRecordPlayersData?.map((player, index) => {
             return (
               <div key={index} style={{ display: 'flex' }}>

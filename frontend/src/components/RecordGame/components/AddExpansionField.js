@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-export default function AddInputField({ parentCallback }) {
+export default function AddExpansionField({ parentCallback }) {
   const [itemsArray, setItemsArray] = useState([]);
 
   const handleChange = (e, index, type) => {
     const list = [...itemsArray];
     type === 'delete' ? list.splice(index, 1) : (list[index] = e.target.value);
     setItemsArray(list);
-    parentCallback(itemsArray);
+    parentCallback(list);
   };
 
   return (
@@ -32,7 +32,17 @@ export default function AddInputField({ parentCallback }) {
           </div>
         );
       })}
-      <AddButton onClick={() => setItemsArray((prev) => prev.concat(''))}>Add Expansion</AddButton>
+      <AddButton
+        onClick={() =>
+          setItemsArray(() => {
+            const list = [...itemsArray];
+            list.push('');
+            setItemsArray(list);
+          })
+        }
+      >
+        Add Expansion
+      </AddButton>
     </div>
   );
 }
