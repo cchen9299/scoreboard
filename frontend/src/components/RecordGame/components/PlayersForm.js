@@ -4,9 +4,10 @@ import AddPlayerFields from './AddPlayerFields';
 import { capitalizeSingleWord } from '../../../util/helper';
 
 export default function PlayersForm({ globalPlayersList, getPlayersData }) {
-  const [players, setPlayers] = useState([]);
   const [filteredPlayers, setFilteredPlayers] = useState([]);
   const [showPlayerSearchResults, setShowPlayerSearchResults] = useState(false);
+
+  const [players, setPlayers] = useState([]);
   const [newPlayers, setNewPlayers] = useState([]);
 
   const handlePlayerSearchOnChange = (e) => {
@@ -20,7 +21,7 @@ export default function PlayersForm({ globalPlayersList, getPlayersData }) {
 
   const handleOnBlur = () => {
     document.addEventListener('click', (documentEvent) => {
-      documentEvent.target.parentElement.id !== 'searchResultsList' &&
+      documentEvent.target.parentElement?.id !== 'searchResultsList' &&
         setShowPlayerSearchResults(false);
     });
   };
@@ -70,7 +71,6 @@ export default function PlayersForm({ globalPlayersList, getPlayersData }) {
                 value={player.firstName + ' ' + player.lastName}
                 disabled
               />
-
               <Input
                 placeholder="Score"
                 type="number"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import AddExpansionField from './AddExpansionField';
 
@@ -17,7 +17,7 @@ export default function BoardgameForm({ boardgames, getBoardgameData }) {
     setShowBoardgameSearchResults(true);
     setFilteredBoardgames(
       boardgames.filter((boardgame) => {
-        return boardgame.name.toLowerCase().includes(e.target.value.toLowerCase());
+        return boardgame.name?.toLowerCase().includes(e.target.value.toLowerCase());
       })
     );
   };
@@ -26,7 +26,8 @@ export default function BoardgameForm({ boardgames, getBoardgameData }) {
     setSelectedBoardgame(item);
     getBoardgameData({
       boardgame: item,
-      expansionsPlayed: [...expansionsChecked, ...newExpansions],
+      expansionsPlayed: [...expansionsChecked],
+      newExpansionsPlayed: [...newExpansions],
     });
   };
 
@@ -34,8 +35,8 @@ export default function BoardgameForm({ boardgames, getBoardgameData }) {
     const item = { name: e.target.value };
     setNewBoardgame(item);
     getBoardgameData({
-      boardgame: item,
-      expansionsPlayed: [...expansionsChecked, ...newExpansions],
+      newBoardgame: item,
+      newExpansionsPlayed: [...newExpansions],
     });
   };
 
@@ -43,6 +44,7 @@ export default function BoardgameForm({ boardgames, getBoardgameData }) {
     setSelectedBoardgame(null);
     setNewBoardgame(null);
     setExpansionsChecked([]);
+    setNewExpansions([]);
     getBoardgameData({
       boardgame: null,
       expansionsPlayed: null,
@@ -54,7 +56,8 @@ export default function BoardgameForm({ boardgames, getBoardgameData }) {
     setNewExpansions([...newExpansions]);
     getBoardgameData({
       boardgame: selectedBoardgame || newBoardgame,
-      expansionsPlayed: [...expansionsChecked, list],
+      expansionsPlayed: [...expansionsChecked],
+      newExpansionsPlayed: list,
     });
   };
 
@@ -66,7 +69,8 @@ export default function BoardgameForm({ boardgames, getBoardgameData }) {
     setExpansionsChecked(list);
     getBoardgameData({
       boardgame: selectedBoardgame || newBoardgame,
-      expansionsPlayed: [list, ...newExpansions],
+      expansionsPlayed: list,
+      newExpansionsPlayed: [...newExpansions],
     });
   };
 
