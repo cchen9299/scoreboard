@@ -1,6 +1,5 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import AddPlayerFields from './AddPlayerFields';
 import { capitalizeSingleWord } from '../../../util/helper';
 
 export default function PlayersForm({ globalPlayersList, getPlayersData }) {
@@ -8,7 +7,6 @@ export default function PlayersForm({ globalPlayersList, getPlayersData }) {
   const [showPlayerSearchResults, setShowPlayerSearchResults] = useState(false);
 
   const [players, setPlayers] = useState([]);
-  const [newPlayers, setNewPlayers] = useState([]);
 
   const handlePlayerSearchOnChange = (e) => {
     setShowPlayerSearchResults(true);
@@ -31,14 +29,14 @@ export default function PlayersForm({ globalPlayersList, getPlayersData }) {
     list.includes(player) === false && list.push(player);
     setPlayers(list);
     setShowPlayerSearchResults(false);
-    getPlayersData([...list, ...newPlayers]);
+    getPlayersData([...list]);
   };
 
   const handleSelectedPlayerChange = (index, type, key, value) => {
     const list = [...players];
     type === 'delete' ? list.splice(index, 1) : (list[index][key] = capitalizeSingleWord(value));
     setPlayers(list);
-    getPlayersData([...list, ...newPlayers]);
+    getPlayersData([...list]);
   };
 
   return (
@@ -88,12 +86,6 @@ export default function PlayersForm({ globalPlayersList, getPlayersData }) {
           );
         })}
       </div>
-      <AddPlayerFields
-        parentCallback={(childrenData) => {
-          setNewPlayers(childrenData);
-          getPlayersData([...players, ...childrenData]);
-        }}
-      />
     </div>
   );
 }

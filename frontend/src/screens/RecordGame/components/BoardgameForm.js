@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import AddExpansionField from './AddExpansionField';
+import AddExpansionField from '../../../components/AddExpansionField';
 
 export default function BoardgameForm({ boardgames, getBoardgameData }) {
   const [filteredBoardgames, setFilteredBoardgames] = useState([]);
   const [showBoardgameSearchResults, setShowBoardgameSearchResults] = useState(false);
-  const [showAddNewGameMenu, setShowAddNewGameMenu] = useState(false);
 
   const [selectedBoardgame, setSelectedBoardgame] = useState(null);
   const [newBoardgame, setNewBoardgame] = useState(null);
@@ -27,15 +26,6 @@ export default function BoardgameForm({ boardgames, getBoardgameData }) {
     getBoardgameData({
       boardgame: item,
       expansionsPlayed: [...expansionsChecked],
-      newExpansionsPlayed: [...newExpansions],
-    });
-  };
-
-  const handleNewBoardgameAdd = (e) => {
-    const item = { name: e.target.value };
-    setNewBoardgame(item);
-    getBoardgameData({
-      newBoardgame: item,
       newExpansionsPlayed: [...newExpansions],
     });
   };
@@ -105,23 +95,6 @@ export default function BoardgameForm({ boardgames, getBoardgameData }) {
         <AddExpansionField parentCallback={handleNewExpansions} />
       </div>
     );
-  } else if (showAddNewGameMenu) {
-    return (
-      <div>
-        <div style={{ display: 'flex', marginTop: 8 }}>
-          <Input placeholder={'Boardgame Name...'} onChange={handleNewBoardgameAdd} />
-          <Delete
-            onClick={() => {
-              setShowAddNewGameMenu(false);
-              setShowBoardgameSearchResults(false);
-              handleBoardgameDelete();
-            }}
-            children={'Delete'}
-          />
-        </div>
-        <AddExpansionField parentCallback={handleNewExpansions} />
-      </div>
-    );
   } else {
     return (
       <div>
@@ -145,7 +118,6 @@ export default function BoardgameForm({ boardgames, getBoardgameData }) {
             </SearchResultsList>
           )}
         </SearchContainer>
-        <AddButton onClick={() => setShowAddNewGameMenu(true)}>New Boardgame</AddButton>
       </div>
     );
   }

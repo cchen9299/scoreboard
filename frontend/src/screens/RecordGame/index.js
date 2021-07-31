@@ -1,22 +1,13 @@
-import React, { useContext, useReducer, useState } from 'react';
-import { getData, getLiveData, postData } from '../../actions';
+import React, { useContext, useState } from 'react';
+import { getData, postData } from '../../actions';
 import { store } from '../../reducer/store';
 import BoardgameForm from './components/BoardgameForm';
 import PlayersForm from './components/PlayersForm';
-
-const gameRecordReducer = (state, event) => {
-  return {
-    ...state,
-    [event.name]: event.value,
-  };
-};
 
 function RecordGame() {
   const { state, dispatch } = useContext(store);
   const { boardgames, players } = state.scoreboard;
   const globalPlayersList = [...players];
-
-  const [formData, setFormData] = useReducer(gameRecordReducer, {});
 
   const [showData, setShowData] = useState(true);
 
@@ -25,29 +16,28 @@ function RecordGame() {
 
   const handleOnSubmit = (event) => {
     event.preventDefault();
-    //need to create new boardgame and new players record in mongoldb
-    //then reshape the boardgame player state data using the new records with id
-    //then submit game record
 
-    const boardgameData = {
-      name: gameRecordBoardgameData.boardgame?.name,
-      expansionsOwned: [
-        ...gameRecordBoardgameData.expansionsPlayed,
-        ...gameRecordBoardgameData.newExpansionsPlayed,
-      ],
-    };
+    // const boardgameData = {
+    //   name: gameRecordBoardgameData.boardgame?.name,
+    //   expansionsOwned: [
+    //     ...gameRecordBoardgameData.expansionsPlayed,
+    //     ...gameRecordBoardgameData.newExpansionsPlayed,
+    //   ],
+    // };
+    // postData(dispatch, 'boardgames', boardgameData);
 
-    const playersData = gameRecordPlayersData.map((player) => {
-      return { firstName: player.firstName, lastName: player.lastName };
-    });
-
-    postData(dispatch, 'boardgames', boardgameData);
-    postData(dispatch, 'players', playersData);
+    // const playersData = gameRecordPlayersData.map((player) => {
+    //   return { firstName: player.firstName, lastName: player.lastName, player_id: };
+    // });
+    // postData(dispatch, 'players', playersData);
 
     // const gameRecord = {
     //   boardgamePlayed: gameRecordBoardgameData.boardgame,
-    //   expansionsPlayed: gameRecordBoardgameData.expansionsPlayed,
-    //   players: gameRecordPlayersData,
+    //   expansionsPlayed: [
+    //     ...gameRecordBoardgameData.expansionsPlayed,
+    //     ...gameRecordBoardgameData.newExpansionsPlayed,
+    //   ],
+    //   players: playersData,
     // };
   };
 
@@ -97,16 +87,7 @@ function RecordGame() {
               return <div key={expansion}>{expansion}</div>;
             })}
           </div>
-          {gameRecordPlayersData.players?.map((player, index) => {
-            return (
-              <div key={index} style={{ display: 'flex' }}>
-                <div>
-                  {player.firstName} {player.lastName} {player.score}
-                </div>
-              </div>
-            );
-          })}
-          {gameRecordPlayersData.newPlayers?.map((player, index) => {
+          {gameRecordPlayersData?.map((player, index) => {
             return (
               <div key={index} style={{ display: 'flex' }}>
                 <div>

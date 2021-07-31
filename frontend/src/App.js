@@ -4,10 +4,10 @@ import { Switch, Route, Link } from 'react-router-dom';
 import { store } from './reducer/store';
 import { getData } from './actions';
 
-import BoardgamesList from './components/BoardgamesList';
-import RecordGame from './components/RecordGame';
-import PlayersList from './components/PlayersList';
-import PlayerDetails from './components/PlayerDetails';
+import BoardgamesList from './screens/BoardgamesList';
+import RecordGame from './screens/RecordGame';
+import PlayersList from './screens/PlayersList';
+import PlayerDetails from './screens/PlayerDetails';
 import styled from 'styled-components';
 
 function App() {

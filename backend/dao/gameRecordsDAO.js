@@ -43,9 +43,6 @@ export default class GameRecordsDAO {
     return { gameRecordsList: [], totalNumGameRecords: 0 };
   }
 
-  //TODO: create boardgame and player(s) if not found, base player fields on player database shapes
-  //TODO: respond error when duplicate players, expansions
-
   static async addGameRecord(
     boardgamePlayed,
     expansionsPlayed = [],
