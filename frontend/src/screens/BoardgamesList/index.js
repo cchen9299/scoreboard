@@ -52,13 +52,6 @@ function BoardgamesList() {
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Input placeholder={'Search...'} />
         <Button onClick={onOpen}>Add Boradgame</Button>
-        <Button
-          onClick={() => {
-            console.log(state.scoreboard.boardgames);
-          }}
-        >
-          Check Store State
-        </Button>
       </div>
       <div>
         <div style={{ padding: 16, display: 'flex', justifyContent: 'space-around' }}>

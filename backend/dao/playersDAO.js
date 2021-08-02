@@ -51,7 +51,8 @@ export default class PlayersDAO {
       };
       const bulk = players.initializeUnorderedBulkOp();
       playersArray.map(updateBulk, bulk);
-      return await bulk.execute();
+      await bulk.execute();
+      return await players.find().toArray();
     } catch (e) {
       console.error(`Unable to post player: ${e}`);
       return { error: e };

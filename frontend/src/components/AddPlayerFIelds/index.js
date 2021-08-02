@@ -1,9 +1,20 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { capitalizeSingleWord } from '../../../util/helper';
+import { capitalizeSingleWord } from '../../util/helper';
 
-export default function AddPlayerFields({ parentCallback }) {
-  const [itemsArray, setItemsArray] = useState([]);
+export default function AddPlayerFields({
+  parentCallback,
+  hasFirstField = true,
+  buttonCopoy = 'Add Another Player',
+  includeScore = false,
+}) {
+  const [itemsArray, setItemsArray] = useState(
+    hasFirstField
+      ? includeScore
+        ? [{ firstName: '', lastName: '', score: 0 }]
+        : [{ firstName: '', lastName: '' }]
+      : []
+  );
 
   const handleChange = (index, type, key, value) => {
     const list = [...itemsArray];
@@ -13,7 +24,7 @@ export default function AddPlayerFields({ parentCallback }) {
   };
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
       {itemsArray?.map((item, index) => {
         return (
           <div style={{ display: 'flex', marginTop: 8 }} key={index}>
@@ -31,14 +42,16 @@ export default function AddPlayerFields({ parentCallback }) {
                 handleChange(index, 'add', 'lastName', e.target.value);
               }}
             />
-            <Input
-              placeholder={`Score ${index}`}
-              value={item.score}
-              type={'number'}
-              onChange={(e) => {
-                handleChange(index, 'add', 'score', e.target.value);
-              }}
-            />
+            {includeScore && (
+              <Input
+                placeholder={`Score ${index}`}
+                value={item.score}
+                type={'number'}
+                onChange={(e) => {
+                  handleChange(index, 'add', 'score', e.target.value);
+                }}
+              />
+            )}
             <Delete
               onClick={() => {
                 handleChange(index, 'delete');
@@ -51,11 +64,15 @@ export default function AddPlayerFields({ parentCallback }) {
       <AddButton
         onClick={() => {
           const list = [...itemsArray];
-          list.push({ firstName: '', lastName: '', score: 0 });
+          list.push(
+            includeScore
+              ? { firstName: '', lastName: '', score: 0 }
+              : { firstName: '', lastName: '' }
+          );
           setItemsArray(list);
         }}
       >
-        Add New Player
+        {buttonCopoy}
       </AddButton>
     </div>
   );

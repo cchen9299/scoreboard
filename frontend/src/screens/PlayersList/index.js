@@ -1,25 +1,50 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import styled from 'styled-components';
 import { store } from '../../reducer/store';
+import {
+  Button,
+  Input,
+  Flex,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+} from '@chakra-ui/react';
+import AddPlayerFields from '../../components/AddPlayerFields';
+import { postData } from '../../actions';
 
-function BoardgamesList() {
-  const { state } = useContext(store);
+function PlayersList() {
+  const { state, dispatch } = useContext(store);
   const players = state.scoreboard.players;
+
+  // useEffect(() => {
+  //   setBoardgames(state.scoreboard.boardgames);
+  // }, [state]);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [newPlayers, setNewPlayers] = useState(null);
+
+  const handleSubmit = () => {
+    const data = [...newPlayers];
+    postData(dispatch, 'players', data);
+    onClose();
+  };
+
+  const handleNewPlayers = (players) => {
+    setNewPlayers([...players]);
+  };
 
   return (
     <div style={{ padding: 16 }}>
-      <h2>Boardgame List</h2>
-      <input
-        style={{
-          width: '50%',
-          backgroundColor: 'lightgrey',
-          borderRadius: 100,
-          borderStyle: 'none',
-          marginTop: 16,
-          marginBottom: 24,
-          padding: 16,
-        }}
-        placeholder={'Search...'}
-      />
+      <h2>Players List</h2>
+      <Flex>
+        <Input placeholder={'Search players...'} />
+        <Button onClick={onOpen}>Add Player</Button>
+      </Flex>
       <div>
         <div style={{ padding: 16, display: 'flex', justifyContent: 'space-around' }}>
           <h4 style={{ flex: 1, textAlign: 'center' }}>First Name</h4>
@@ -28,32 +53,50 @@ function BoardgamesList() {
           <h4 style={{ flex: 1, textAlign: 'center' }}>Last Played</h4>
         </div>
         <div>
-          {players.map((player, index) => {
+          {players?.map((player, index) => {
             const { firstName, lastName } = player;
             return (
-              <div
-                key={index}
-                style={{
-                  height: 50,
-                  borderRadius: 5,
-                  boxShadow: '0 0 16px rgba(0,0,0,0.2)',
-                  margin: 8,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-around',
-                }}
-              >
+              <RowItem key={index}>
                 <p style={{ flex: 1, textAlign: 'center' }}>{firstName}</p>
                 <p style={{ flex: 1, textAlign: 'center' }}>{lastName}</p>
                 <p style={{ flex: 1, textAlign: 'center' }}>TODO: Games Played</p>
                 <p style={{ flex: 1, textAlign: 'center' }}>TODO: Last Played</p>
-              </div>
+              </RowItem>
             );
           })}
         </div>
       </div>
+      <Modal
+        isCentered
+        closeOnOverlayClick={true}
+        isOpen={isOpen}
+        onClose={onClose}
+        blockScrollOnMount={true}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add Boardgame</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <AddPlayerFields parentCallback={handleNewPlayers} />
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={handleSubmit}>Add Players</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 }
 
-export default BoardgamesList;
+export default PlayersList;
+
+const RowItem = styled.div`
+  height: 50px;
+  border-radius: 5px;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.2);
+  margin: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+`;

@@ -30,8 +30,8 @@ export default class PlayersController {
     try {
       const players = req.body;
 
-      const gameRecordResponse = await PlayersDAO.addPlayer(players);
-      res.json({ status: 'success' });
+      const playersResponse = await PlayersDAO.addPlayer(players);
+      res.json({ status: 'success', players: playersResponse });
     } catch (e) {
       res.status(500).json({ error: e.message });
     }
