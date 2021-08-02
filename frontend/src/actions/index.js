@@ -53,6 +53,5 @@ export const postData = (dispatch, collectionName, data) => {
         type: ACTIONS.SUCCESS,
         payload: getPayload(collectionName, data),
       });
-      console.log(data);
     });
 };

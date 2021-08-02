@@ -34,7 +34,7 @@ export default class BoardgamesController {
       const expansionsOwned = req.body.expansionsOwned;
 
       const boardgameResponse = await BoardgamesDAO.addBoardgame(name, expansionsOwned);
-      res.json({ status: 'success' });
+      res.json({ status: 'success', boardgames: boardgameResponse });
     } catch (e) {
       res.status(500).json({ error: e.message });
     }

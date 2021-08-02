@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { Input } from '@chakra-ui/react';
 
 export default function AddExpansionField({ parentCallback }) {
   const [itemsArray, setItemsArray] = useState([]);
@@ -17,7 +18,7 @@ export default function AddExpansionField({ parentCallback }) {
         return (
           <div style={{ display: 'flex', marginTop: 8 }} key={index}>
             <Input
-              placeholder={`Expansion Name...${index}`}
+              placeholder={`Expansion ${index + 1} Name...`}
               value={item}
               onChange={(e) => {
                 handleChange(e, index);
@@ -57,12 +58,4 @@ const AddButton = styled.div`
   cursor: pointer;
   padding: 8px 0;
   color: steelblue;
-`;
-
-const Input = styled.input`
-  outline: none;
-  border-radius: 5px;
-  border: solid 2px grey;
-  padding: 8px;
-  flex: 1;
 `;
