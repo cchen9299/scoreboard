@@ -70,7 +70,6 @@ export default class BoardgamesController {
       }
       res.json(boardgame);
     } catch (e) {
-      console.log(`api, ${e}`);
       res.status(500).json({ error: e });
     }
   }

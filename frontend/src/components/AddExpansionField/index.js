@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Input } from '@chakra-ui/react';
+import { Input, IconButton } from '@chakra-ui/react';
+import { SmallCloseIcon } from '@chakra-ui/icons';
 
 export default function AddExpansionField({ parentCallback }) {
   const [itemsArray, setItemsArray] = useState([]);
@@ -24,11 +25,12 @@ export default function AddExpansionField({ parentCallback }) {
                 handleChange(e, index);
               }}
             />
-            <Delete
+            <IconButton
               onClick={() => {
                 handleChange(null, index, 'delete');
               }}
               children={'Delete'}
+              icon={<SmallCloseIcon />}
             />
           </div>
         );
@@ -47,11 +49,6 @@ export default function AddExpansionField({ parentCallback }) {
     </div>
   );
 }
-
-const Delete = styled.div`
-  cursor: pointer;
-  padding: 8px;
-`;
 
 const AddButton = styled.div`
   font-weight: bold;

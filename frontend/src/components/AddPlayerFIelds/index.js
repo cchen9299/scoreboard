@@ -1,3 +1,5 @@
+import { SmallCloseIcon } from '@chakra-ui/icons';
+import { Input, IconButton } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { capitalizeSingleWord } from '../../util/helper';
@@ -52,7 +54,8 @@ export default function AddPlayerFields({
                 }}
               />
             )}
-            <Delete
+            <IconButton
+              icon={<SmallCloseIcon />}
               onClick={() => {
                 handleChange(index, 'delete');
               }}
@@ -78,23 +81,9 @@ export default function AddPlayerFields({
   );
 }
 
-const Delete = styled.div`
-  cursor: pointer;
-  padding: 8px;
-`;
-
 const AddButton = styled.div`
   font-weight: bold;
   cursor: pointer;
   padding: 8px 0;
   color: steelblue;
-`;
-
-const Input = styled.input`
-  outline: none;
-  border-radius: 5px;
-  border: solid 2px grey;
-  padding: 8px;
-  flex: 1;
-  margin-right: 8px;
 `;

@@ -1,3 +1,5 @@
+import { SearchIcon, SmallCloseIcon } from '@chakra-ui/icons';
+import { Flex, IconButton, Input } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { capitalizeSingleWord } from '../../../util/helper';
@@ -42,12 +44,17 @@ export default function PlayersForm({ globalPlayersList, getPlayersData }) {
   return (
     <div>
       <SearchContainer>
-        <ListSearchInput
-          placeholder={'Search players...'}
-          onChange={handlePlayerSearchOnChange}
-          onBlurCapture={handleOnBlur}
-          id={'searchResultsList'}
-        />
+        <Flex style={{ alignItems: 'center' }}>
+          <div style={{ padding: '0 0 0 12px' }}>
+            <SearchIcon />
+          </div>
+          <ListSearchInput
+            placeholder={'Search players...'}
+            onChange={handlePlayerSearchOnChange}
+            onBlurCapture={handleOnBlur}
+            id={'searchResultsList'}
+          />
+        </Flex>
         {showPlayerSearchResults && (
           <SearchResultsList id={'searchResultsList'}>
             {filteredPlayers.map((player) => {
@@ -76,7 +83,8 @@ export default function PlayersForm({ globalPlayersList, getPlayersData }) {
                   handleSelectedPlayerChange(index, 'update', 'score', e.target.value);
                 }}
               />
-              <Delete
+              <IconButton
+                icon={<SmallCloseIcon />}
                 children={'Delete'}
                 onClick={() => {
                   handleSelectedPlayerChange(index, 'delete');
@@ -102,6 +110,7 @@ const ListSearchInput = styled.input`
   border: 0;
   outline: none;
   border-radius: 5px;
+  flex-grow: 1;
 `;
 const SearchResultsList = styled.div`
   z-index: 10;
@@ -123,17 +132,4 @@ const SelectedPlayer = styled.input`
   border: solid 2px lightgrey;
   border-radius: 5px;
   background-color: lightgrey;
-`;
-
-const Delete = styled.div`
-  cursor: pointer;
-  padding: 8px;
-`;
-
-const Input = styled.input`
-  outline: none;
-  border-radius: 5px;
-  border: solid 2px grey;
-  padding: 8px;
-  flex: 1;
 `;

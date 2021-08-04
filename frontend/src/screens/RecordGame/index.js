@@ -3,6 +3,7 @@ import { getData, postData } from '../../actions';
 import { store } from '../../reducer/store';
 import BoardgameForm from './components/BoardgameForm';
 import PlayersForm from './components/PlayersForm';
+import { Button } from '@chakra-ui/react';
 
 function RecordGame() {
   const { state, dispatch } = useContext(store);
@@ -26,24 +27,26 @@ function RecordGame() {
     // };
     // postData(dispatch, 'boardgames', boardgameData);
 
-    // const playersData = gameRecordPlayersData.map((player) => {
-    //   return { firstName: player.firstName, lastName: player.lastName, player_id: };
-    // });
+    const playersData = gameRecordPlayersData.map((player) => {
+      return {
+        firstName: player.firstName,
+        lastName: player.lastName,
+        score: player.score,
+        player_id: player._id,
+      };
+    });
     // postData(dispatch, 'players', playersData);
 
-    // const gameRecord = {
-    //   boardgamePlayed: gameRecordBoardgameData.boardgame,
-    //   expansionsPlayed: [
-    //     ...gameRecordBoardgameData.expansionsPlayed,
-    //     ...gameRecordBoardgameData.newExpansionsPlayed,
-    //   ],
-    //   players: playersData,
-    // };
-  };
+    const gameRecord = {
+      boardgamePlayed: gameRecordBoardgameData.boardgame,
+      expansionsPlayed: [
+        ...gameRecordBoardgameData.expansionsPlayed,
+        ...gameRecordBoardgameData.newExpansionsPlayed,
+      ],
+      players: playersData,
+    };
 
-  const handleCheckDatabase = () => {
-    getData(dispatch, 'players');
-    console.log(state.scoreboard.players);
+    postData(dispatch, 'gameRecords', gameRecord);
   };
 
   return (
@@ -52,7 +55,6 @@ function RecordGame() {
       <form
         onSubmit={(event) => {
           handleOnSubmit(event);
-          handleCheckDatabase();
         }}
         style={{ display: 'flex', flexDirection: 'column', width: '50%' }}
       >
@@ -71,9 +73,8 @@ function RecordGame() {
           }}
         />
         <br />
-        <button type="submit">Off to the data base you go</button>
+        <Button type="submit">Off to the data base you go</Button>
       </form>
-      <button onClick={handleCheckDatabase}>Check Database</button>
       {showData && (
         <div style={{ minHeight: 100 }}>
           <br />
@@ -86,13 +87,14 @@ function RecordGame() {
             {gameRecordBoardgameData.expansionsPlayed?.map((expansion) => {
               return <div key={expansion}>{expansion}</div>;
             })}
+            {gameRecordBoardgameData.newExpansionsPlayed?.map((expansion) => {
+              return <div key={expansion}>{expansion}</div>;
+            })}
           </div>
           {gameRecordPlayersData?.map((player, index) => {
             return (
               <div key={index} style={{ display: 'flex' }}>
-                <div>
-                  {player.firstName} {player.lastName} {player.score}
-                </div>
+                {player.firstName} {player.lastName} {player.score} {player._id}
               </div>
             );
           })}

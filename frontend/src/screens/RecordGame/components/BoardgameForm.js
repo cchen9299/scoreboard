@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import AddExpansionField from '../../../components/AddExpansionField';
+import { Checkbox, Flex, IconButton } from '@chakra-ui/react';
+import { SearchIcon, SmallCloseIcon } from '@chakra-ui/icons';
 
 export default function BoardgameForm({ boardgames, getBoardgameData }) {
   const [filteredBoardgames, setFilteredBoardgames] = useState([]);
@@ -69,12 +71,13 @@ export default function BoardgameForm({ boardgames, getBoardgameData }) {
       <div>
         <SelectedBoardgameContainer>
           <SelectedBoardgame value={selectedBoardgame.name} disabled />
-          <Delete
+          <IconButton
             onClick={() => {
               setSelectedBoardgame(null);
               setShowBoardgameSearchResults(false);
               handleBoardgameDelete();
             }}
+            icon={<SmallCloseIcon />}
             children={'Delete'}
           />
         </SelectedBoardgameContainer>
@@ -82,7 +85,7 @@ export default function BoardgameForm({ boardgames, getBoardgameData }) {
         {selectedBoardgame.expansionsOwned?.map((expansion, index) => {
           return (
             <div key={expansion} style={{ display: 'flex' }}>
-              <input
+              <Checkbox
                 id={`expansion${index}`}
                 type="checkbox"
                 value={expansion}
@@ -99,13 +102,18 @@ export default function BoardgameForm({ boardgames, getBoardgameData }) {
     return (
       <div>
         <SearchContainer>
-          <ListSearchInput
-            placeholder={'Search boardgames...'}
-            onChange={(e) => handleBoardgameSearchOnChange(e)}
-            onBlur={() => {
-              selectedBoardgame && setShowBoardgameSearchResults(false);
-            }}
-          />
+          <Flex alignItems="center">
+            <div style={{ padding: '0 0 0 12px' }}>
+              <SearchIcon />
+            </div>
+            <ListSearchInput
+              placeholder={'Search boardgames...'}
+              onChange={(e) => handleBoardgameSearchOnChange(e)}
+              onBlur={() => {
+                selectedBoardgame && setShowBoardgameSearchResults(false);
+              }}
+            />
+          </Flex>
           {showBoardgameSearchResults && (
             <SearchResultsList>
               {filteredBoardgames.map((boardgame) => {
@@ -134,6 +142,7 @@ const ListSearchInput = styled.input`
   border: 0;
   outline: none;
   border-radius: 5px;
+  flex-grow: 1;
 `;
 const SearchResultsList = styled.div`
   z-index: 10;
@@ -158,27 +167,7 @@ const SelectedBoardgameContainer = styled.div`
 const SelectedBoardgame = styled.input`
   padding: 8px;
   flex: 1;
-  border: solid 2px lightgrey;
+  border: 0px;
   background-color: lightgrey;
   border-radius: 5px;
-`;
-
-const Delete = styled.div`
-  cursor: pointer;
-  padding: 8px;
-`;
-
-const AddButton = styled.div`
-  font-weight: bold;
-  cursor: pointer;
-  padding: 8px 0;
-  color: steelblue;
-`;
-
-const Input = styled.input`
-  outline: none;
-  border-radius: 5px;
-  border: solid 2px grey;
-  padding: 8px;
-  flex: 1;
 `;
