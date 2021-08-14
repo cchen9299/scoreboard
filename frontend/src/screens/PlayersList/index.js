@@ -61,7 +61,7 @@ function PlayersList() {
         <div>
           {players?.map((player, index) => {
             const { firstName, lastName, _id } = player;
-            const playerGames = gameRecords.filter((gameRecord) => {
+            const playerGames = gameRecords?.filter((gameRecord) => {
               return gameRecord.players.every((player) => {
                 return player.player_id === _id;
               });

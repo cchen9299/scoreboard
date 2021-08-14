@@ -45,7 +45,7 @@ export default class GameRecordsController {
         date,
         boardgame_id
       );
-      res.json({ status: 'success' });
+      res.json({ status: 'success', gameRecords: gameRecordResponse });
     } catch (e) {
       res.status(500).json({ error: e.message });
     }

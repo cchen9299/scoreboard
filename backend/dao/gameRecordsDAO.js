@@ -60,11 +60,11 @@ export default class GameRecordsDAO {
         players: players,
         date: date,
       };
-
-      return await gameRecords.insertOne(gameRecordDoc);
+      await gameRecords.insertOne(gameRecordDoc);
+      return await gameRecords.find().toArray();
     } catch (e) {
       console.error(`Unable to post game record: ${e}`);
-      return { error: e };
+      return { error: 'e' };
     }
   }
 

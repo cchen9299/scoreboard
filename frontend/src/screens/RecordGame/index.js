@@ -20,7 +20,6 @@ function RecordGame() {
     event.preventDefault();
     if (gameRecordBoardgameData === null || gameRecordPlayersData === null) {
       setInputError('field required');
-      console.log('registered');
       return;
     }
 
