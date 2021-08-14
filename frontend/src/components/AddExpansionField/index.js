@@ -19,11 +19,13 @@ export default function AddExpansionField({ parentCallback }) {
         return (
           <div style={{ display: 'flex', marginTop: 8 }} key={index}>
             <Input
+              isRequired
               placeholder={`Expansion ${index + 1} Name...`}
               value={item}
               onChange={(e) => {
                 handleChange(e, index);
               }}
+              name={`expansion${index}`}
             />
             <IconButton
               onClick={() => {

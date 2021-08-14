@@ -83,15 +83,19 @@ function BoardgamesList() {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add Boardgame</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Input placeholder="Boardgame Name" onChange={(e) => handleNewBoardgameName(e)} />
-            <AddExpansionField parentCallback={handleNewExpansions} />
-          </ModalBody>
-          <ModalFooter>
-            <Button onClick={handleBoardgameSubmit}>Add Boardgame</Button>
-          </ModalFooter>
+          <form>
+            <ModalHeader>Add Boardgame</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Input placeholder="Boardgame Name" onChange={(e) => handleNewBoardgameName(e)} />
+              <AddExpansionField parentCallback={handleNewExpansions} />
+            </ModalBody>
+            <ModalFooter>
+              <Button type="submit" onClick={handleBoardgameSubmit}>
+                Add Boardgame
+              </Button>
+            </ModalFooter>
+          </form>
         </ModalContent>
       </Modal>
     </div>

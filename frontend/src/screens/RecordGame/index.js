@@ -1,22 +1,28 @@
 import React, { useContext, useState } from 'react';
-import { getData, postData } from '../../actions';
+import { postData } from '../../actions';
 import { store } from '../../reducer/store';
 import BoardgameForm from './components/BoardgameForm';
 import PlayersForm from './components/PlayersForm';
-import { Button } from '@chakra-ui/react';
+import { Button, Spinner } from '@chakra-ui/react';
 
 function RecordGame() {
   const { state, dispatch } = useContext(store);
   const { boardgames, players } = state.scoreboard;
   const globalPlayersList = [...players];
 
-  const [showData, setShowData] = useState(true);
+  const showDataDoubleCheck = false;
 
-  const [gameRecordBoardgameData, setGameRecordBoardgameData] = useState({});
-  const [gameRecordPlayersData, setGameRecordPlayersData] = useState([]);
+  const [gameRecordBoardgameData, setGameRecordBoardgameData] = useState(null);
+  const [gameRecordPlayersData, setGameRecordPlayersData] = useState(null);
+  const [inputError, setInputError] = useState();
 
   const handleOnSubmit = (event) => {
     event.preventDefault();
+    if (gameRecordBoardgameData === null || gameRecordPlayersData === null) {
+      setInputError('field required');
+      console.log('registered');
+      return;
+    }
 
     // const boardgameData = {
     //   name: gameRecordBoardgameData.boardgame?.name,
@@ -35,7 +41,6 @@ function RecordGame() {
         player_id: player._id,
       };
     });
-    // postData(dispatch, 'players', playersData);
 
     const gameRecord = {
       boardgamePlayed: gameRecordBoardgameData.boardgame,
@@ -53,6 +58,7 @@ function RecordGame() {
     <div style={{ padding: 16 }}>
       <h2>Record Game</h2>
       <form
+        name={'gameRecordForm'}
         onSubmit={(event) => {
           handleOnSubmit(event);
         }}
@@ -60,6 +66,7 @@ function RecordGame() {
       >
         <h3>Boardgame</h3>
         <BoardgameForm
+          inputError={inputError}
           boardgames={boardgames}
           getBoardgameData={(data) => {
             setGameRecordBoardgameData(data);
@@ -67,27 +74,31 @@ function RecordGame() {
         />
         <h3>Players</h3>
         <PlayersForm
+          inputError={inputError}
           globalPlayersList={globalPlayersList}
           getPlayersData={(data) => {
             setGameRecordPlayersData(data);
           }}
         />
         <br />
-        <Button type="submit">Off to the data base you go</Button>
+        <Button type="submit" disabled={state.isLoading}>
+          {state.isLoading ? <Spinner /> : 'Off to the data base you go'}
+        </Button>
       </form>
-      {showData && (
+      {showDataDoubleCheck && (
         <div style={{ minHeight: 100 }}>
           <br />
           <br />
           <h3>Double Check My Data...</h3>
           <br />
           <div>
-            {gameRecordBoardgameData.boardgame?.name}
-            {gameRecordBoardgameData.newBoardgame?.name}
-            {gameRecordBoardgameData.expansionsPlayed?.map((expansion) => {
+            {gameRecordBoardgameData?.boardgame.name}
+            {gameRecordBoardgameData?.boardgame._id}
+            {gameRecordBoardgameData?.newBoardgame?.name}
+            {gameRecordBoardgameData?.expansionsPlayed?.map((expansion) => {
               return <div key={expansion}>{expansion}</div>;
             })}
-            {gameRecordBoardgameData.newExpansionsPlayed?.map((expansion) => {
+            {gameRecordBoardgameData?.newExpansionsPlayed?.map((expansion) => {
               return <div key={expansion}>{expansion}</div>;
             })}
           </div>

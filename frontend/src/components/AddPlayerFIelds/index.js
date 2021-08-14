@@ -1,5 +1,5 @@
 import { SmallCloseIcon } from '@chakra-ui/icons';
-import { Input, IconButton } from '@chakra-ui/react';
+import { Input, NumberInput, NumberInputField, IconButton } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { capitalizeSingleWord } from '../../util/helper';
@@ -36,6 +36,8 @@ export default function AddPlayerFields({
               onChange={(e) => {
                 handleChange(index, 'add', 'firstName', e.target.value);
               }}
+              isRequired={true}
+              name={`firstName${index}`}
             />
             <Input
               placeholder={`Last Name...${index}`}
@@ -43,16 +45,22 @@ export default function AddPlayerFields({
               onChange={(e) => {
                 handleChange(index, 'add', 'lastName', e.target.value);
               }}
+              isRequired={true}
+              name={`lastName${index}`}
             />
             {includeScore && (
-              <Input
+              <NumberInput
                 placeholder={`Score ${index}`}
                 value={item.score}
                 type={'number'}
                 onChange={(e) => {
                   handleChange(index, 'add', 'score', e.target.value);
                 }}
-              />
+                name={`score${index}`}
+                isRequired={true}
+              >
+                <NumberInputField isRequired={true} />
+              </NumberInput>
             )}
             <IconButton
               icon={<SmallCloseIcon />}

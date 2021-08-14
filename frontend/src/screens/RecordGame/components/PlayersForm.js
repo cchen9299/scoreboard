@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { capitalizeSingleWord } from '../../../util/helper';
 
-export default function PlayersForm({ globalPlayersList, getPlayersData }) {
+export default function PlayersForm({ globalPlayersList, getPlayersData, inputError }) {
   const [filteredPlayers, setFilteredPlayers] = useState([]);
   const [showPlayerSearchResults, setShowPlayerSearchResults] = useState(false);
 
@@ -53,6 +53,7 @@ export default function PlayersForm({ globalPlayersList, getPlayersData }) {
             onChange={handlePlayerSearchOnChange}
             onBlurCapture={handleOnBlur}
             id={'searchResultsList'}
+            name={`searchPlayers`}
           />
         </Flex>
         {showPlayerSearchResults && (
@@ -77,6 +78,7 @@ export default function PlayersForm({ globalPlayersList, getPlayersData }) {
                 disabled
               />
               <Input
+                isRequired
                 placeholder="Score"
                 type="number"
                 onChange={(e) => {

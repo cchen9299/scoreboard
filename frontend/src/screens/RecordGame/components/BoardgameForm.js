@@ -112,6 +112,7 @@ export default function BoardgameForm({ boardgames, getBoardgameData }) {
               onBlur={() => {
                 selectedBoardgame && setShowBoardgameSearchResults(false);
               }}
+              name={'searchBoardgame'}
             />
           </Flex>
           {showBoardgameSearchResults && (
