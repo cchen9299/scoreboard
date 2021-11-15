@@ -43,14 +43,16 @@ export default class PlayersDAO {
     return { playersList: [], totalNumPlayers: 0 };
   }
 
-  static async addPlayer(firstName, lastName) {
+  static async addPlayer(playersArray) {
     try {
-      const playerDoc = {
-        firstName: firstName,
-        lastName: lastName,
+      const updateBulk = function (rec) {
+        this.find(rec).upsert().updateOne({ $set: rec });
+        return null;
       };
-
-      return await players.insertOne(playerDoc);
+      const bulk = players.initializeUnorderedBulkOp();
+      playersArray.map(updateBulk, bulk);
+      await bulk.execute();
+      return await players.find().toArray();
     } catch (e) {
       console.error(`Unable to post player: ${e}`);
       return { error: e };

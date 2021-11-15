@@ -33,8 +33,8 @@ export default class BoardgamesController {
       const name = req.body.name;
       const expansionsOwned = req.body.expansionsOwned;
 
-      const boardgameResponse = await BoardgamesDAO.addBoardgame(expansionsOwned, name);
-      res.json({ status: 'success' });
+      const boardgameResponse = await BoardgamesDAO.addBoardgame(name, expansionsOwned);
+      res.json({ status: 'success', boardgames: boardgameResponse });
     } catch (e) {
       res.status(500).json({ error: e.message });
     }
@@ -70,7 +70,6 @@ export default class BoardgamesController {
       }
       res.json(boardgame);
     } catch (e) {
-      console.log(`api, ${e}`);
       res.status(500).json({ error: e });
     }
   }

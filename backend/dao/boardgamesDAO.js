@@ -45,14 +45,28 @@ export default class BoardgamesDAO {
 
   //TODO: respond error when duplicate expansions
 
-  static async addBoardgame(boardgameName, expansionsOwned = []) {
+  static async addBoardgame(name, expansionsOwned = []) {
     try {
-      const boardgameDoc = {
-        name: boardgameName,
-        expansionsOwned: expansionsOwned,
-      };
+      // return await boardgames.findOneAndUpdate(
+      //   {
+      //     name: name,
+      //   },
+      //   { $set: { name: name }, $addToSet: { expansionsOwned: { $each: [...expansionsOwned] } } },
+      //   {
+      //     upsert: true,
+      //     setDefaultsOnInsert: true,
+      //   }
+      // );
 
-      return await boardgames.insertOne(boardgameDoc);
+      const updateBulk = function (rec) {
+        this.find(rec).upsert().updateOne({ $set: rec });
+        return null;
+      };
+      const bulk = boardgames.initializeUnorderedBulkOp();
+      [{ name: name, expansionsOwned: expansionsOwned }].map(updateBulk, bulk);
+      //return await bulk.execute();
+      await bulk.execute();
+      return await boardgames.find().toArray();
     } catch (e) {
       console.error(`Unable to post boardgame: ${e}`);
       return { error: e };

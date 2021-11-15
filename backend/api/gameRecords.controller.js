@@ -33,7 +33,7 @@ export default class GameRecordsController {
       const boardgamePlayed = req.body.boardgamePlayed;
       const expansionsPlayed = req.body.expansionsPlayed;
       const gameDuration = req.body.gameDuration;
-      const players = req.body.players;
+      const players = req.body.players; //[...{firstName, lastName, score, _id}]
       const date = new Date();
       const boardgame_id = req.body.boardgame_id;
 
@@ -45,7 +45,7 @@ export default class GameRecordsController {
         date,
         boardgame_id
       );
-      res.json({ status: 'success' });
+      res.json({ status: 'success', gameRecords: gameRecordResponse });
     } catch (e) {
       res.status(500).json({ error: e.message });
     }

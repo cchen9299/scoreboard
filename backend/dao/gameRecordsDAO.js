@@ -43,9 +43,6 @@ export default class GameRecordsDAO {
     return { gameRecordsList: [], totalNumGameRecords: 0 };
   }
 
-  //TODO: create boardgame and player(s) if not found, base player fields on player database shapes
-  //TODO: respond error when duplicate players, expansions
-
   static async addGameRecord(
     boardgamePlayed,
     expansionsPlayed = [],
@@ -63,11 +60,11 @@ export default class GameRecordsDAO {
         players: players,
         date: date,
       };
-
-      return await gameRecords.insertOne(gameRecordDoc);
+      await gameRecords.insertOne(gameRecordDoc);
+      return await gameRecords.find().toArray();
     } catch (e) {
       console.error(`Unable to post game record: ${e}`);
-      return { error: e };
+      return { error: 'e' };
     }
   }
 
