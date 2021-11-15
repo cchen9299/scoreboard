@@ -1,116 +1,171 @@
-import React, { useContext, useState } from 'react';
-import { postData } from '../../actions';
-import { store } from '../../reducer/store';
-import BoardgameForm from './components/BoardgameForm';
-import PlayersForm from './components/PlayersForm';
-import { Button, Spinner } from '@chakra-ui/react';
+import React, { useState } from "react";
+import BoardgameForm from "./components/BoardgameForm";
+import PlayersForm from "./components/PlayersForm";
+import {
+  Button,
+  Spinner,
+  Box,
+  useToast,
+  Flex,
+  Heading,
+  Text,
+  Input,
+} from "@chakra-ui/react";
+import { useQuery, useMutation } from "@apollo/client";
+import dotenv from "dotenv";
+import { READ_ALL, INSERT_RECORD } from "../../graphql/operations";
 
 function RecordGame() {
-  const { state, dispatch } = useContext(store);
-  const { boardgames, players } = state.scoreboard;
-  const globalPlayersList = [...players];
+  const { loading, data } = useQuery(READ_ALL);
+  const [insertRecord, { loading: adding }] = useMutation(INSERT_RECORD);
+  const toast = useToast();
+  let boardgames, players;
 
-  const showDataDoubleCheck = false;
+  if (!loading && data) {
+    boardgames = data.boardgames;
+    players = data.players;
+  }
+
+  const showDataDoubleCheck = true;
 
   const [gameRecordBoardgameData, setGameRecordBoardgameData] = useState(null);
   const [gameRecordPlayersData, setGameRecordPlayersData] = useState(null);
-  const [inputError, setInputError] = useState();
+  const [providedPassword, setProvidedPassword] = useState("");
+  const [inputError, setInputError] = useState(null);
 
-  const handleOnSubmit = (event) => {
+  const handleOnSubmit = async (event) => {
     event.preventDefault();
-    if (gameRecordBoardgameData === null || gameRecordPlayersData === null) {
-      setInputError('field required');
+    const boardgamePlayed = gameRecordBoardgameData.boardgamePlayed;
+    if (boardgamePlayed === undefined) {
+      setInputError("i don't see a boardgame played");
       return;
     }
-
-    // const boardgameData = {
-    //   name: gameRecordBoardgameData.boardgame?.name,
-    //   expansionsOwned: [
-    //     ...gameRecordBoardgameData.expansionsPlayed,
-    //     ...gameRecordBoardgameData.newExpansionsPlayed,
-    //   ],
-    // };
-    // postData(dispatch, 'boardgames', boardgameData);
-
-    const playersData = gameRecordPlayersData.map((player) => {
-      return {
-        firstName: player.firstName,
-        lastName: player.lastName,
-        score: player.score,
-        player_id: player._id,
-      };
-    });
-
-    const gameRecord = {
-      boardgamePlayed: gameRecordBoardgameData.boardgame,
-      expansionsPlayed: [
-        ...gameRecordBoardgameData.expansionsPlayed,
-        ...gameRecordBoardgameData.newExpansionsPlayed,
-      ],
-      players: playersData,
-    };
-
-    postData(dispatch, 'gameRecords', gameRecord);
+    if (gameRecordPlayersData.length > 1) {
+      setInputError(
+        "unless fred played alone and didn't count himself as a player, i need players"
+      );
+      return;
+    }
+    if (providedPassword !== "8008") {
+      setInputError("are you too drunk to have the right password?");
+      return;
+    }
+    setInputError(null);
+    await insertRecord({
+      variables: {
+        data: {
+          boardgamePlayed: {
+            _id: boardgamePlayed._id,
+            name: boardgamePlayed.name,
+          },
+          expansionsPlayed: gameRecordBoardgameData.expansionsPlayed,
+          players: gameRecordPlayersData,
+          date: new Date(),
+        },
+      },
+    })
+      .then(
+        toast({
+          position: "bottom-left",
+          render: () => (
+            <Box color="white" p={3} bg="green.500">
+              Success!
+            </Box>
+          ),
+        })
+      )
+      .catch((error) => {
+        toast({
+          position: "bottom-left",
+          render: () => (
+            <Box color="white" p={3} bg="red.500">
+              {error}
+            </Box>
+          ),
+        });
+      });
   };
 
+  if (!data || loading) {
+    return null;
+  }
+
   return (
-    <div style={{ padding: 16 }}>
-      <h2>Record Game</h2>
+    <Flex direction={"column"}>
+      <Heading size="lg">Record Game</Heading>
+      <Box pt={2} />
       <form
-        name={'gameRecordForm'}
-        onSubmit={(event) => {
-          handleOnSubmit(event);
+        name={"gameRecordForm"}
+        onSubmit={(e) => {
+          handleOnSubmit(e);
         }}
-        style={{ display: 'flex', flexDirection: 'column', width: '50%' }}
       >
-        <h3>Boardgame</h3>
+        <Heading size="sm">Boardgame</Heading>
         <BoardgameForm
-          inputError={inputError}
           boardgames={boardgames}
           getBoardgameData={(data) => {
             setGameRecordBoardgameData(data);
           }}
         />
-        <h3>Players</h3>
+        <Box p={2} />
+        <Heading size="sm">Players</Heading>
         <PlayersForm
-          inputError={inputError}
-          globalPlayersList={globalPlayersList}
+          globalPlayersList={players}
           getPlayersData={(data) => {
             setGameRecordPlayersData(data);
           }}
         />
-        <br />
-        <Button type="submit" disabled={state.isLoading}>
-          {state.isLoading ? <Spinner /> : 'Off to the data base you go'}
+        <Box p={2} />
+        <Heading size="sm">Secret Password</Heading>
+        <Input
+          onChange={(e) => setProvidedPassword(e.target.value)}
+          mt={2}
+        ></Input>
+        <Box p={2} />
+        <Button
+          colorScheme="yellow"
+          variant={"solid"}
+          type="submit"
+          disabled={adding}
+          width="100%"
+          maxW="500px"
+        >
+          {adding ? <Spinner /> : "Off to the data base you go"}
         </Button>
+        {inputError && (
+          <Text
+            maxW="500px"
+            bg="red.100"
+            p={2}
+            mt={2}
+            borderRadius="base"
+            color="red.500"
+          >
+            {inputError}
+          </Text>
+        )}
       </form>
       {showDataDoubleCheck && (
         <div style={{ minHeight: 100 }}>
           <br />
           <br />
-          <h3>Double Check My Data...</h3>
-          <br />
+          <Heading size="sm">Double Check My Data...</Heading>
           <div>
-            {gameRecordBoardgameData?.boardgame.name}
-            {gameRecordBoardgameData?.boardgame._id}
-            {gameRecordBoardgameData?.newBoardgame?.name}
+            {gameRecordBoardgameData?.boardgamePlayed?.name}
             {gameRecordBoardgameData?.expansionsPlayed?.map((expansion) => {
-              return <div key={expansion}>{expansion}</div>;
-            })}
-            {gameRecordBoardgameData?.newExpansionsPlayed?.map((expansion) => {
               return <div key={expansion}>{expansion}</div>;
             })}
           </div>
           {gameRecordPlayersData?.map((player, index) => {
             return (
-              <div key={index} style={{ display: 'flex' }}>
-                {player.firstName} {player.lastName} {player.score} {player._id}
+              <div key={index} style={{ display: "flex" }}>
+                {player.firstName} {player.lastName} {player.score}
               </div>
             );
           })}
         </div>
       )}
-    </div>
+    </Flex>
   );
 }
 

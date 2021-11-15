@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { store } from '../../reducer/store';
+import React, { useState } from "react";
 import {
+  Box,
   Button,
   Input,
   Modal,
@@ -12,68 +11,58 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
-} from '@chakra-ui/react';
-import AddExpansionField from '../../components/AddExpansionField';
-import { postData } from '../../actions';
+  Heading,
+} from "@chakra-ui/react";
+import AddExpansionField from "../../components/AddExpansionField";
+import { useQuery } from "@apollo/client";
+import { READ_BOARDGAMES } from "../../graphql/operations";
+import AppTable from "../../components/AppTable";
 
 function BoardgamesList() {
-  const { state, dispatch } = useContext(store);
-  const [boardgames, setBoardgames] = useState([]);
-
-  useEffect(() => {
-    setBoardgames(state.scoreboard.boardgames);
-  }, [state]);
+  const { loading, data } = useQuery(READ_BOARDGAMES);
+  const boardgames = data?.boardgames;
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [newBoardgame, setNewBoardgame] = useState(null);
   const [newExpansions, setNewExpansions] = useState([]);
 
   const handleBoardgameSubmit = () => {
-    const data = {
-      name: newBoardgame.name,
-      expansionsOwned: [...newExpansions],
-    };
-    postData(dispatch, 'boardgames', data);
-    onClose();
+    // const data = {
+    //   name: newBoardgame.name,
+    //   expansionsOwned: [...newExpansions],
+    // };
+    // onClose();
   };
 
   const handleNewExpansions = (newExpansions) => {
-    setNewExpansions([...newExpansions]);
+    // setNewExpansions([...newExpansions]);
   };
 
   const handleNewBoardgameName = (e) => {
-    const item = { name: e.target.value };
-    setNewBoardgame(item);
+    // const item = { name: e.target.value };
+    // setNewBoardgame(item);
+  };
+
+  if (loading || !data) {
+    return null;
+  }
+
+  const contentMap = {
+    headerContent: ["Name", "Games Played", "Last Played"],
+    bodyContent: boardgames.map((boardgame) => {
+      return [boardgame.name, "...", "..."];
+    }),
   };
 
   return (
-    <div style={{ padding: 16 }}>
-      <h2>Boardgame List</h2>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Input placeholder={'Search...'} />
+    <Box>
+      <Heading mb={2}>Boardgames</Heading>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        {/* <Input placeholder={"I don't work yet..."} /> */}
         <Button onClick={onOpen}>Add Boradgame</Button>
       </div>
-      <div>
-        <div style={{ padding: 16, display: 'flex', justifyContent: 'space-around' }}>
-          <h4 style={{ flex: 1, textAlign: 'center' }}>Name</h4>
-          <h4 style={{ flex: 1, textAlign: 'center' }}>Expansions Owned</h4>
-          <h4 style={{ flex: 1, textAlign: 'center' }}>Games Played</h4>
-          <h4 style={{ flex: 1, textAlign: 'center' }}>Last Played</h4>
-        </div>
-        <div>
-          {boardgames.map((boardgame) => {
-            const { name, expansionsOwned } = boardgame;
-            return (
-              <RowItem key={boardgame.name}>
-                <p style={{ flex: 1, textAlign: 'center' }}>{name}</p>
-                <p style={{ flex: 1, textAlign: 'center' }}>{expansionsOwned?.length || 0}</p>
-                <p style={{ flex: 1, textAlign: 'center' }}>TODO: Games Played</p>
-                <p style={{ flex: 1, textAlign: 'center' }}>TODO: Last Played</p>
-              </RowItem>
-            );
-          })}
-        </div>
-      </div>
+      <Box p={2} />
+      <AppTable contentMap={contentMap} />
       <Modal
         isCentered
         closeOnOverlayClick={true}
@@ -87,7 +76,10 @@ function BoardgamesList() {
             <ModalHeader>Add Boardgame</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <Input placeholder="Boardgame Name" onChange={(e) => handleNewBoardgameName(e)} />
+              <Input
+                placeholder="Boardgame Name"
+                onChange={(e) => handleNewBoardgameName(e)}
+              />
               <AddExpansionField parentCallback={handleNewExpansions} />
             </ModalBody>
             <ModalFooter>
@@ -98,18 +90,8 @@ function BoardgamesList() {
           </form>
         </ModalContent>
       </Modal>
-    </div>
+    </Box>
   );
 }
 
 export default BoardgamesList;
-
-const RowItem = styled.div`
-  height: 50px;
-  border-radius: 5px;
-  box-shadow: 0 0 16px rgba(0, 0, 0, 0.2);
-  margin: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-`;

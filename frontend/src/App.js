@@ -1,75 +1,136 @@
-import React, { useContext, useEffect } from 'react';
-import { Switch, Route, Link } from 'react-router-dom';
+import React from "react";
+import { Switch, Route, Link, useLocation } from "react-router-dom";
 
-import { store } from './reducer/store';
-import { getData } from './actions';
+import {
+  Button,
+  Flex,
+  Container,
+  Box,
+  IconButton,
+  Collapse,
+  Stack,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { SmallCloseIcon, HamburgerIcon } from "@chakra-ui/icons";
 
-import BoardgamesList from './screens/BoardgamesList';
-import RecordGame from './screens/RecordGame';
-import PlayersList from './screens/PlayersList';
-import PlayerDetails from './screens/PlayerDetails';
-import styled from 'styled-components';
+import BoardgamesList from "./screens/BoardgamesList";
+import RecordGame from "./screens/RecordGame";
+import PlayersList from "./screens/PlayersList";
+import PlayerDetails from "./screens/PlayerDetails";
+import GameRecordList from "./screens/GameRecordList";
 
 function App() {
-  const { dispatch } = useContext(store);
+  const currentLocation = useLocation().pathname;
+  const { isOpen, onToggle } = useDisclosure();
 
-  useEffect(() => {
-    getData(dispatch, 'boardgames');
-    getData(dispatch, 'gameRecords');
-    getData(dispatch, 'players');
-  }, [dispatch]);
+  const linkMap = [
+    {
+      path: "/",
+      linkName: "Record",
+    },
+    {
+      path: "/boardgameList",
+      linkName: "Boardgames",
+    },
+    {
+      path: "/playersList",
+      linkName: "Players",
+    },
+    {
+      path: "/gameRecordList",
+      linkName: "History",
+    },
+  ];
 
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
-      <nav style={{ backgroundColor: 'skyblue', width: '200px', padding: 16 }}>
-        <div>
-          <Button to={'/recordGame'}>
-            <p style={{ color: 'steelblue' }}>Record Game</p>
-          </Button>
-          <li>
-            <NavLink style={{ marginTop: 25 }} to={'/'}>
-              Boardgame List
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to={'/playersList'}>Players List</NavLink>
-          </li>
-        </div>
-      </nav>
+    <Flex direction={"column"} style={{ height: "100vh" }}>
+      <Flex bg={"blue.100"}>
+        <Container maxW="container.xl" pt={2} pb={2}>
+          {/* desktop nav */}
+          <Box
+            display={{ base: "none", md: "flex" }}
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Flex>
+              {linkMap.map((link) => {
+                return (
+                  <Link to={link.path} key={link.linkName}>
+                    <Button
+                      colorScheme="blue"
+                      variant={
+                        currentLocation === link.path ? "solid" : "ghost"
+                      }
+                    >
+                      {link.linkName}
+                    </Button>
+                  </Link>
+                );
+              })}
+            </Flex>
+            <Text color="blue.700" fontSize="xl" fontWeight="black">
+              SCOREBOARD
+            </Text>
+          </Box>
 
-      <div style={{ flex: 1 }}>
+          {/* mobile nav */}
+          <Flex display={{ base: "flex", md: "none" }} flexDirection="column">
+            <Flex alignItems="center" justifyContent="space-between">
+              <Text color="blue.700" fontSize="xl" fontWeight="black">
+                SCOREBOARD
+              </Text>
+              <IconButton
+                onClick={onToggle}
+                icon={isOpen ? <SmallCloseIcon /> : <HamburgerIcon />}
+                mb={2}
+              />
+            </Flex>
+            <Collapse in={isOpen} animateOpacity>
+              <Stack>
+                {linkMap.map((link) => {
+                  return (
+                    <Link
+                      to={link.path}
+                      key={link.linkName}
+                      style={{
+                        display: "flex",
+                        backgroundColor:
+                          currentLocation === link.path
+                            ? "rgba(255,255,255,0.5)"
+                            : null,
+                        height: 50,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                      onClick={onToggle}
+                    >
+                      <Text color="blue.500" fontWeight="bold">
+                        {link.linkName}
+                      </Text>
+                    </Link>
+                  );
+                })}
+              </Stack>
+            </Collapse>
+          </Flex>
+        </Container>
+      </Flex>
+
+      <Container maxW="container.xl" p={4}>
         <Switch>
-          <Route exact path={'/'} component={BoardgamesList} />
-          <Route exact path={'/recordGame'} component={RecordGame} />
-          <Route exact path={'/playersList'} component={PlayersList} />
-          <Route exact path={'/playersList/:id/playerDetails'} component={PlayerDetails} />
+          <Route exact path={"/"} component={RecordGame} />
+          <Route exact path={"/boardgameList"} component={BoardgamesList} />
+          <Route exact path={"/playersList"} component={PlayersList} />
+          <Route exact path={"/gameRecordList"} component={GameRecordList} />
+          <Route
+            exact
+            path={"/playersList/:id/playerDetails"}
+            component={PlayerDetails}
+          />
         </Switch>
-      </div>
-    </div>
+      </Container>
+    </Flex>
   );
 }
-
 export default App;
-
-const Button = styled(Link)`
-  background-color: white;
-  border-radius: 100px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  color: steelblue;
-  font-size: 19px;
-  border-style: none;
-  width: 100%;
-  cursor: pointer;
-`;
-
-const NavLink = styled(Link)`
-  padding: 8px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;

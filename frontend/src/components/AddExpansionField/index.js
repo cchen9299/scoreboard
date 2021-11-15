@@ -1,52 +1,72 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { Input, IconButton } from '@chakra-ui/react';
-import { SmallCloseIcon } from '@chakra-ui/icons';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import { Input, IconButton, Box } from "@chakra-ui/react";
+import { SmallCloseIcon } from "@chakra-ui/icons";
 
 export default function AddExpansionField({ parentCallback }) {
-  const [itemsArray, setItemsArray] = useState([]);
+  const [workingExpansionList, setWorkingExpansionsList] = useState([]);
 
-  const handleChange = (e, index, type) => {
-    const list = [...itemsArray];
-    type === 'delete' ? list.splice(index, 1) : (list[index] = e.target.value);
-    setItemsArray(list);
-    parentCallback(list);
+  useEffect(() => {
+    parentCallback(workingExpansionList);
+  }, [workingExpansionList]);
+
+  const handleValueChange = (e, index) => {
+    const list = [...workingExpansionList];
+    list[index] = e.target.value;
+    setWorkingExpansionsList(list);
+  };
+
+  const handleDelete = (index) => {
+    const list = [...workingExpansionList];
+    list.splice(index, 1);
+    setWorkingExpansionsList(list);
+  };
+
+  const handleOnBlur = () => {
+    const list = [...workingExpansionList];
+    setWorkingExpansionsList(list);
   };
 
   return (
     <div>
-      {itemsArray?.map((item, index) => {
+      {workingExpansionList?.map((item, index) => {
         return (
-          <div style={{ display: 'flex', marginTop: 8 }} key={index}>
-            <Input
-              isRequired
-              placeholder={`Expansion ${index + 1} Name...`}
-              value={item}
-              onChange={(e) => {
-                handleChange(e, index);
-              }}
-              name={`expansion${index}`}
-            />
-            <IconButton
-              onClick={() => {
-                handleChange(null, index, 'delete');
-              }}
-              children={'Delete'}
-              icon={<SmallCloseIcon />}
-            />
+          <div key={index}>
+            <Box p={2}>
+              <Input
+                autoComplete="off"
+                isRequired
+                placeholder={`Expansion ${index + 1} Name...`}
+                value={item}
+                onChange={(e) => {
+                  handleValueChange(e, index);
+                }}
+                onBlur={(e) => {
+                  handleOnBlur(e, index);
+                }}
+                name={`expansion${index}`}
+              />
+              <IconButton
+                onClick={(e) => {
+                  handleDelete(e, index);
+                }}
+                children={"Delete"}
+                icon={<SmallCloseIcon />}
+              />
+            </Box>
           </div>
         );
       })}
       <AddButton
         onClick={() =>
-          setItemsArray(() => {
-            const list = [...itemsArray];
-            list.push('');
-            setItemsArray(list);
+          setWorkingExpansionsList(() => {
+            const list = [...workingExpansionList];
+            list.push("");
+            setWorkingExpansionsList(list);
           })
         }
       >
-        Add Expansion
+        New/Add Expansion
       </AddButton>
     </div>
   );

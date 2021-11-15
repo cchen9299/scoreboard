@@ -1,125 +1,143 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import AddExpansionField from '../../../components/AddExpansionField';
-import { Checkbox, Flex, IconButton } from '@chakra-ui/react';
-import { SearchIcon, SmallCloseIcon } from '@chakra-ui/icons';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import AddExpansionField from "../../../components/AddExpansionField";
+import {
+  Checkbox,
+  Heading,
+  IconButton,
+  InputGroup,
+  InputLeftElement,
+  Input,
+  Box,
+} from "@chakra-ui/react";
+import { SearchIcon, SmallCloseIcon } from "@chakra-ui/icons";
 
 export default function BoardgameForm({ boardgames, getBoardgameData }) {
-  const [filteredBoardgames, setFilteredBoardgames] = useState([]);
-  const [showBoardgameSearchResults, setShowBoardgameSearchResults] = useState(false);
+  const [filteredBoardgames, setFilteredBoardgames] = useState(boardgames);
+  const [showBoardgameSearchResults, setShowBoardgameSearchResults] =
+    useState(false);
+  const [boardgamePlayed, setBoardgamePlayed] = useState(null);
+  const expansionsOwned = boardgamePlayed?.boardgamePlayed?.expansionsOwned;
+  const [ownedExpansionsPlayed, setOwnedExpansionsPlayed] = useState([]);
+  const [newExpansionsPlayed, setNewExpansionsPlayed] = useState([]);
 
-  const [selectedBoardgame, setSelectedBoardgame] = useState(null);
-  const [newBoardgame, setNewBoardgame] = useState(null);
+  //todo: onFocus open search results listh
+  //todo: limit search results list
 
-  const [expansionsChecked, setExpansionsChecked] = useState([]);
-  const [newExpansions, setNewExpansions] = useState([]);
+  useEffect(() => {
+    getBoardgameData({
+      ...boardgamePlayed,
+      expansionsPlayed: [...ownedExpansionsPlayed, ...newExpansionsPlayed],
+    });
+  }, [boardgamePlayed, ownedExpansionsPlayed, newExpansionsPlayed]);
 
   const handleBoardgameSearchOnChange = (e) => {
     setShowBoardgameSearchResults(true);
     setFilteredBoardgames(
       boardgames.filter((boardgame) => {
-        return boardgame.name?.toLowerCase().includes(e.target.value.toLowerCase());
+        return boardgame.name
+          ?.toLowerCase()
+          .includes(e.target.value.toLowerCase());
       })
     );
   };
 
-  const handleResultOnClick = (item) => {
-    setSelectedBoardgame(item);
-    getBoardgameData({
-      boardgame: item,
-      expansionsPlayed: [...expansionsChecked],
-      newExpansionsPlayed: [...newExpansions],
+  const handleResultOnClick = (boardgame) => {
+    setBoardgamePlayed({
+      boardgamePlayed: { ...boardgame },
     });
   };
 
   const handleBoardgameDelete = () => {
-    setSelectedBoardgame(null);
-    setNewBoardgame(null);
-    setExpansionsChecked([]);
-    setNewExpansions([]);
-    getBoardgameData({
-      boardgame: null,
-      expansionsPlayed: null,
-    });
+    setBoardgamePlayed(null);
   };
 
   const handleNewExpansions = (newExpansions) => {
-    const list = [...newExpansions];
-    setNewExpansions([...newExpansions]);
-    getBoardgameData({
-      boardgame: selectedBoardgame || newBoardgame,
-      expansionsPlayed: [...expansionsChecked],
-      newExpansionsPlayed: list,
-    });
+    setNewExpansionsPlayed(newExpansions);
   };
 
-  const handleExpansionChecked = (e) => {
-    const list = [...expansionsChecked];
-    const value = e.target.value;
-    const valueIndex = list.indexOf(value);
-    list.includes(e.target.value) ? list.splice(valueIndex, 1) : list.push(e.target.value);
-    setExpansionsChecked(list);
-    getBoardgameData({
-      boardgame: selectedBoardgame || newBoardgame,
-      expansionsPlayed: list,
-      newExpansionsPlayed: [...newExpansions],
-    });
+  const handleExpansion = (e) => {
+    const ownedExpansionsPlayedCopy = [...ownedExpansionsPlayed];
+    const expansionName = e.target.value;
+    const valueIndex = ownedExpansionsPlayedCopy.indexOf(expansionName);
+    ownedExpansionsPlayed.includes(expansionName)
+      ? ownedExpansionsPlayedCopy.splice(valueIndex, 1)
+      : ownedExpansionsPlayedCopy.push(expansionName);
+    setOwnedExpansionsPlayed(ownedExpansionsPlayedCopy);
   };
 
-  if (selectedBoardgame) {
+  if (boardgamePlayed !== null) {
     return (
-      <div>
+      <Box style={{ maxWidth: 500 }}>
         <SelectedBoardgameContainer>
-          <SelectedBoardgame value={selectedBoardgame.name} disabled />
+          <Input
+            variant="filled"
+            mr={2}
+            value={boardgamePlayed?.boardgamePlayed?.name}
+            isReadOnly
+          />
           <IconButton
             onClick={() => {
-              setSelectedBoardgame(null);
+              setBoardgamePlayed(null);
               setShowBoardgameSearchResults(false);
               handleBoardgameDelete();
             }}
             icon={<SmallCloseIcon />}
-            children={'Delete'}
+            children={"Delete"}
           />
         </SelectedBoardgameContainer>
-        {selectedBoardgame.expansionsOwned && <label>Expansions Played</label>}
-        {selectedBoardgame.expansionsOwned?.map((expansion, index) => {
+        <Box p={1} />
+        {expansionsOwned && <Heading size="sm">Expansions Played</Heading>}
+        {expansionsOwned?.map((expansion, index) => {
           return (
-            <div key={expansion} style={{ display: 'flex' }}>
-              <Checkbox
-                id={`expansion${index}`}
-                type="checkbox"
-                value={expansion}
-                onChange={handleExpansionChecked}
-              />
+            <Checkbox
+              p={2}
+              mt={1}
+              key={expansion}
+              id={`expansion${index}`}
+              type="checkbox"
+              value={expansion}
+              onChange={handleExpansion}
+              style={{
+                borderRadius: 8,
+                borderWidth: 1,
+                borderColor: "lightGrey",
+                width: "100%",
+                flex: 1,
+              }}
+            >
               <label htmlFor={`expansion${index}`}>{expansion}</label>
-            </div>
+            </Checkbox>
           );
         })}
-        <AddExpansionField parentCallback={handleNewExpansions} />
-      </div>
+        {/* <AddExpansionField
+          parentCallback={handleNewExpansions}
+        /> */}
+      </Box>
     );
   } else {
     return (
-      <div>
+      <Box style={{ maxWidth: 500 }}>
         <SearchContainer>
-          <Flex alignItems="center">
-            <div style={{ padding: '0 0 0 12px' }}>
-              <SearchIcon />
-            </div>
-            <ListSearchInput
-              placeholder={'Search boardgames...'}
+          <InputGroup>
+            <InputLeftElement children={<SearchIcon />} />
+            <Input
+              autoComplete={"off"}
+              placeholder={"Search boardgames..."}
               onChange={(e) => handleBoardgameSearchOnChange(e)}
               onBlur={() => {
-                selectedBoardgame && setShowBoardgameSearchResults(false);
+                boardgamePlayed && setShowBoardgameSearchResults(false);
               }}
-              name={'searchBoardgame'}
             />
-          </Flex>
+          </InputGroup>
           {showBoardgameSearchResults && (
             <SearchResultsList>
               {filteredBoardgames.map((boardgame) => {
                 return (
-                  <Result key={boardgame.name} onClick={() => handleResultOnClick(boardgame)}>
+                  <Result
+                    key={boardgame.name}
+                    onClick={() => handleResultOnClick(boardgame)}
+                  >
                     {boardgame.name}
                   </Result>
                 );
@@ -127,27 +145,21 @@ export default function BoardgameForm({ boardgames, getBoardgameData }) {
             </SearchResultsList>
           )}
         </SearchContainer>
-      </div>
+      </Box>
     );
   }
 }
 const SearchContainer = styled.div`
-  border: solid 2px grey;
+  border: solid 1px lightgrey;
   display: flex;
   flex-direction: column;
-  border-radius: 5px;
+  border-radius: 8px;
   margin-top: 8px;
-`;
-const ListSearchInput = styled.input`
-  padding: 8px;
-  border: 0;
-  outline: none;
-  border-radius: 5px;
-  flex-grow: 1;
 `;
 const SearchResultsList = styled.div`
   z-index: 10;
   background-color: white;
+  border-radius: 0 0 8px 8px;
   width: 100%;
 `;
 
@@ -163,12 +175,4 @@ const SelectedBoardgameContainer = styled.div`
   margin-top: 8px;
   display: flex;
   align-items: center;
-`;
-
-const SelectedBoardgame = styled.input`
-  padding: 8px;
-  flex: 1;
-  border: 0px;
-  background-color: lightgrey;
-  border-radius: 5px;
 `;
