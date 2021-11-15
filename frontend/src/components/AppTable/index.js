@@ -7,8 +7,12 @@ export default function AppTable({ contentMap }) {
     <Table variant="simple">
       <Thead>
         <Tr>
-          {headerContent.map((cell) => {
-            return <Th pl={0}>{cell}</Th>;
+          {headerContent.map((cell, index) => {
+            return (
+              <Th key={index} pl={0}>
+                {cell}
+              </Th>
+            );
           })}
         </Tr>
       </Thead>
@@ -16,8 +20,12 @@ export default function AppTable({ contentMap }) {
         {bodyContent.map((row, index) => {
           return (
             <Tr key={index}>
-              {row.map((cell) => {
-                return <Td pl={0}>{cell}</Td>;
+              {row.map((cell, cellIndex) => {
+                return (
+                  <Td key={cellIndex} pl={0}>
+                    {cell}
+                  </Td>
+                );
               })}
             </Tr>
           );
